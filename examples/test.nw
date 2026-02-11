@@ -1,0 +1,53 @@
+= Example of `littst`
+
+This example shows a firmware program calling into a memory-mapped hardware
+register implemented in Verilog.
+
+== Firmware
+
+We would like to toggle a register:
+
+<<Toggle the register>>=
+GPIO_REG ^= 1;
+@
+
+Let's write a C program that does defines and toggles this register continually
+in a loop:
+
+<<main.c>>=
+#include <stdint.h>
+#define GPIO_REG (*(volatile uint32_t*)0x40000000)
+
+int main(void)
+{
+    GPIO_REG = 1;
+    while (1)
+        <<Toggle the register>>
+}
+@
+
+== Hardware
+
+The following Verilog code describes the hardware implementation of the same
+register:
+
+<<Output data on clock>>=
+always @(posedge clk)
+begin
+    if (write_en)
+        gpio_out <= data_in;
+end
+@
+
+Of course we have to put the code into a module:
+
+<<gpio.v>>=
+module gpio_reg (
+    input  wire clk,
+    input  wire write_en,
+    input  wire data_in,
+    output reg  gpio_out
+);
+<<Output data on clock>>
+endmodule
+@
