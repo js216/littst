@@ -13,6 +13,7 @@ fn get_lang_from_ext(ext: &str) -> &str {
         "js" => "javascript",
         "sh" => "bash",
         "typ" => "typst",
+        "mk" => "makefile",
         _ => "",
     }
 }
@@ -63,6 +64,9 @@ fn main() {
 
 fn process_code_line(line: &str, lang: &str) {
     let trimmed = line.trim();
+
+    // Indent all lines
+    println!("#h(1em)");
 
     // Match <<Reference>> pattern (no '=' at the end)
     if trimmed.starts_with("<<") && trimmed.ends_with(">>") {
